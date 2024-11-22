@@ -32,8 +32,10 @@ func produce(channel chan<- int, wg *sync.WaitGroup) {
 func consume(channel <-chan int, wg *sync.WaitGroup) {
 	defer wg.Done()
 	for message := range channel {
-		atomic.AddUint64(&taskCounter, 1)                           // Increment task counter for throughput measurement
-		time.Sleep(time.Duration(rand.Intn(10)) * time.Millisecond) // Simulate work
+		atomic.AddUint64(&taskCounter, 1) // Increment task counter for throughput measurement
+		// Simulate work by performing some operation on the message
+		time.Sleep(time.Duration(rand.Intn(10)) * time.Millisecond)
+		fmt.Printf("Consumed message: %d\n", message)
 	}
 }
 

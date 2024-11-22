@@ -32,8 +32,9 @@ func produce(channel chan<- int, wg *sync.WaitGroup) {
 func consume(channel <-chan int, wg *sync.WaitGroup) {
 	defer wg.Done()
 	for message := range channel {
-		atomic.AddUint64(&taskCounter, 1)                           // Increment task counter for throughput measurement
 		time.Sleep(time.Duration(rand.Intn(10)) * time.Millisecond) // Simulate work
+		processedTaskCount := atomic.AddUint64(&taskCounter, 1)
+		fmt.Printf("Consumed task: %d (Total processed: %d)\n", message, processedTaskCount)
 	}
 }
 
@@ -42,38 +43,25 @@ func main() {
 
 	start := time.Now()
 
-	// Unbuffered channel
 	unbufferedChannel := make(chan int)
-
-	// Start producers and consumers for unbuffered channel
+	bufferedChannel := make(chan int, bufferSize)
 	for i := 0; i < numProducers; i++ {
 		wgUnbuffered.Add(1)
 		go produce(unbufferedChannel, &wgUnbuffered)
-	}
-	for i := 0; i < numConsumers; i++ {
-		wgUnbuffered.Add(1)
-		go consume(unbufferedChannel, &wgUnbuffered)
-	}
-
-	// Buffered channel
-	bufferedChannel := make(chan int, bufferSize)
-
-	// Start producers and consumers for buffered channel
-	for i := 0; i < numProducers; i++ {
 		wgBuffered.Add(1)
 		go produce(bufferedChannel, &wgBuffered)
 	}
+
 	for i := 0; i < numConsumers; i++ {
+		wgUnbuffered.Add(1)
+		go consume(unbufferedChannel, &wgUnbuffered)
 		wgBuffered.Add(1)
 		go consume(bufferedChannel, &wgBuffered)
 	}
-
-	// Wait for all goroutines to finish
 	wgUnbuffered.Wait()
 	wgBuffered.Wait()
 
 	end := time.Now()
-
 	durationUnbuffered := end.Sub(start)
 	fmt.Println("Unbuffered channel duration:", durationUnbuffered)
 	fmt.Println("Unbuffered channel throughput:", taskCounter/uint64(durationUnbuffered.Seconds()))
