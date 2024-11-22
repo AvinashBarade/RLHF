@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Form Submission Example</title>
+</head>
+<body>
+    <h1>Enter Numbers:</h1>
+    <form method="post" action="/">
+        <input type="text" name="numbers" placeholder="Enter a number" value="{{ .Numbers }}"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+    <h2>Doubled Numbers:</h2>
+    <ul>
+        {{ range $index, $number := .DoubledNumbers }}
+        <li>{{ $number }}</li>
+        {{ end }}
+    </ul>
+</body>
+</html>

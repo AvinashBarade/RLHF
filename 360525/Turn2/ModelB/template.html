@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Form Example</title>
+</head>
+<body>
+    <h1>Form Example</h1>
+    {{ if .TransformedNumbers }}
+        <h2>Transformed Numbers:</h2>
+        <ul>
+            {{ range .TransformedNumbers }}
+                <li>{{ double . }}</li>
+            {{ end }}
+        </ul>
+    {{ end }}
+
+    <form method="POST">
+        <input type="text" name="numbers" placeholder="Enter a number..." required>
+        <input type="text" name="numbers" placeholder="Enter a number..." required>
+        <!-- You can add more number inputs as needed -->
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
