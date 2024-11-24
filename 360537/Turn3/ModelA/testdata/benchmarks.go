@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"runtime"
 	"testing"
 )
 
@@ -60,9 +58,4 @@ func BenchmarkSliceWrite(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		s[i%n] = i % n
 	}
-}
-
-func main() {
-	fmt.Printf("Go version: %s, architecture: %s\n", runtime.Version(), runtime.GOARCH)
-	testing.Main(nil, nil, nil, nil) // Run all tests and benchmarks automatically
 }

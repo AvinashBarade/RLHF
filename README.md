@@ -2,6 +2,13 @@
 
 As per your suggestion, I selected model A's response as a conversation history. Now give me a user prompt for turn2
 
+Model A's response:
+
+Model A's Output:
+
+Model B's response:
+
+Model B's Output:
 
 now provide me these details for both the responses 
 
@@ -32,5 +39,9 @@ B. overall preference (Select this  A is significantly better than B,  A is bett
 360525 --> 2
 
 360531 --> 4
-360537 --> 
+360537 --> 3
+360585 --> 3
+360578 --> 3
+360580 --> 2
 
+360536 --> 3
