@@ -29,22 +29,8 @@ A. Preference Explanation.
 B. overall preference (Select this  A is significantly better than B,  A is better than B, A is slightly better than B, A is negligibly better than B vice versa  )
 
 
-357297 --> 2
-357283 --> 1
-357265 --> 2
-360523 --> 3
-360525 --> 2
+Monday:
 
-360531 --> 4
-360537 --> 3
-360585 --> 3
-360578 --> 3
-360580 --> 2
-
-360536 --> 4
-360521 --> 2
-360551 --> 2
-360549 --> 2
-360546 --> 2
-360559 --> 2
-360560 --> 2
+360579 --> 2
+360584 --> 2
+360592 --> 2
