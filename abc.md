@@ -1,6 +1,6 @@
 # RLHF
 
-As per your suggestion, I selected model A's response as a conversation history. Now give me a user prompt for turn2
+As per your suggestion, I selected model B's response as a conversation history. Now give me a user prompt for turn2
 
 Model A's response:
 Model A's Output:
@@ -36,3 +36,8 @@ Monday:
 360592 --> 2
 360587 --> 3
 360550 --> 1
+
+
+360513 --> 2
+360529 --> 2
+360564 --> 2
