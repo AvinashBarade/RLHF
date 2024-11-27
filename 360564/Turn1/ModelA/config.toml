@@ -1,0 +1,7 @@
+[[database]]
+type = "postgres"
+host = "localhost"
+port = 5432
+name = "my_go_app"
+user = "admin"
+password = "secret"
