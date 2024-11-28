@@ -1,13 +1,13 @@
 # RLHF
 
-As per your suggestion, I selected model B's response as a conversation history. Now give me a user prompt for turn2
+As per your suggestion, I selected model A's response as a conversation history. Now give me a user prompt for turn2
 
 Model A's response:
 Model A's Output:
 Model B's response:
 Model B's Output:
 
-now provide me these details for both the responses 
+Now provide me these details for both the responses 
 
 1. Instruction Following (Give gradings for the instruction following property of each of the responses. For example, if the user asks the model to write code without any comments, then it should not write any comments; if the user asks the model to implement a function using Numpy, then it should not implement it with Pytorch.Rate it out off this three 1. No issues 2. Minor issues 3. Major issues )
 2. Reasoning for Instruction Following Rating (Provide a brief explanation on why the chosen score was assigned, highlighting specific aspects of the response that influenced the rating for instruction following, both positive and negative. Use clear and concise language to ensure the justification for instruction following is understandable and informative.)
@@ -41,3 +41,12 @@ Monday:
 360513 --> 2
 360529 --> 2
 360564 --> 2
+
+Wed:
+
+389100 --> 2
+389093 --> 2
+389115 --> 2
+389127 --> 2
+
+
