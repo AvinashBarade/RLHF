@@ -1,6 +1,6 @@
 # RLHF
 
-As per your suggestion, I selected model A's response as a conversation history. Now give me a user prompt for turn2
+As per your suggestion, I selected model Bs response as a conversation history. Now give me a user prompt for turn2
 
 Model A's response:
 Model A's Output:
@@ -30,23 +30,16 @@ B. overall preference (Select this  A is significantly better than B,  A is bett
 
 
 Monday:
-
-360579 --> 2
-360584 --> 2
-360592 --> 2
-360587 --> 3
-360550 --> 1
-
-
-360513 --> 2
-360529 --> 2
-360564 --> 2
+389161 -> 2
+389135 -> 2
 
 Wed:
 
-389100 --> 2
-389093 --> 2
-389115 --> 2
-389127 --> 2
+Guru:
+
+Friday:
+
+
+
 
 
