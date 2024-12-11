@@ -1,6 +1,6 @@
 # RLHF
 
-As per your suggestion, I selected model B's response as a conversation history. Now give me a user prompt for turn2 which will be cohirent with response selected and user prompt for turn1
+As per your suggestion, I selected model A's response as a conversation history. Now give me a user prompt for turn2 which will be cohirent with response selected and user prompt for turn1
 
 
 Now provide me these details for both the responses 
@@ -25,47 +25,19 @@ A. Preference Explanation.
 B. overall preference (Select this  A is significantly better than B,  A is better than B, A is slightly better than B, A is negligibly better than B vice versa  )
 
 
-Monday:
-389161 -> 2
-389135 -> 2
+52
 
-Mangal:
-390204 --> 2
-390208 --> 2
-390236 --> 2
-390261 --> 2
-390306 --> 2
-390300 --> 2
-390241 --> 2
-390256 --> 2
+mon:
+390483 --> 2
+390496 --> 2
+390490 --> 2
+390454 --> 2
+390479 --> 2
+390466 --> 2
 
-Wed:
-390259 --> 2
-390230 --> 2
-390275 --> 2
-390312 --> 2
-390356 --> 2
-390385 --> 2
-390375 --> 2
-390393 --> 2
- 
-Guru:
-
-390399 --> 2
-390401 --> 2
-390396 --> 2
-390397 --> 2
-
-
-
-Friday:
-
-
-Saturday:
-
-390402 --> 2
-390430 --> 2
-
-Sun:
-390391 --> 2
-390323 --> 
+Mangal
+391094 --> 2
+391088 --> 
+391078 --> 2
+391040 --> 2
+391036 --> 2
