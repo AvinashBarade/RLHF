@@ -2,89 +2,40 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"sync"
 	"time"
 )
 
-const (
-	totalRequests = 100
-	maxGoroutines = 10 // Limit for the first scheduling pattern
-	url           = "https://jsonplaceholder.typicode.com/todos/1"
-)
+// function to simulate some work and measure execution time
+func worker(id int, wg *sync.WaitGroup) {
+	defer wg.Done()         // Mark this Goroutine as done when the function returns
+	startTime := time.Now() // Record the start time
 
-// Function to perform an HTTP GET request
-func fetch(url string, wg *sync.WaitGroup, results chan<- string) {
-	defer wg.Done()
-	resp, err := http.Get(url)
-	if err != nil {
-		results <- fmt.Sprintf("Error: %v", err)
-		return
-	}
-	defer resp.Body.Close()
+	// Simulate work (e.g., sleep for a random duration)
+	time.Sleep(time.Duration(id) * 100 * time.Millisecond)
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		results <- fmt.Sprintf("Error reading response: %v", err)
-		return
-	}
-	results <- fmt.Sprintf("Response size: %d bytes", len(body))
+	// Calculate execution time
+	elapsedTime := time.Since(startTime)
+	defer reportExecutionTime(id, elapsedTime) // Ensure we report execution time at the end
+
+	// Additional processing can be done here
 }
 
-// Function to perform concurrent requests with a limit on Goroutines
-func limitedConcurrency() {
-	var wg sync.WaitGroup
-	results := make(chan string, totalRequests)
-
-	sem := make(chan struct{}, maxGoroutines) // Semaphore to limit concurrency
-
-	start := time.Now()
-	for i := 0; i < totalRequests; i++ {
-		sem <- struct{}{} // Acquire a token
-		wg.Add(1)
-
-		go func() {
-			defer func() { <-sem }() // Release the token
-			fetch(url, &wg, results)
-		}()
-	}
-
-	wg.Wait()
-	close(results)
-	elapsed := time.Since(start)
-
-	fmt.Printf("Limited Concurrency took: %s\n", elapsed)
-	for res := range results {
-		fmt.Println(res)
-	}
-}
-
-// Function to perform concurrent requests without limiting Goroutines
-func unlimitedConcurrency() {
-	var wg sync.WaitGroup
-	results := make(chan string, totalRequests)
-
-	start := time.Now()
-	for i := 0; i < totalRequests; i++ {
-		wg.Add(1)
-		go fetch(url, &wg, results)
-	}
-
-	wg.Wait()
-	close(results)
-	elapsed := time.Since(start)
-
-	fmt.Printf("Unlimited Concurrency took: %s\n", elapsed)
-	for res := range results {
-		fmt.Println(res)
-	}
+// function to report execution time
+func reportExecutionTime(id int, duration time.Duration) {
+	fmt.Printf("Goroutine %d finished in %s\n", id, duration)
 }
 
 func main() {
-	fmt.Println("=== Limited Concurrency ===")
-	limitedConcurrency()
+	var wg sync.WaitGroup
+	numWorkers := 5
 
-	fmt.Println("\n=== Unlimited Concurrency ===")
-	unlimitedConcurrency()
+	// Launch multiple Goroutines
+	for i := 1; i <= numWorkers; i++ {
+		wg.Add(1)         // Increment the WaitGroup counter
+		go worker(i, &wg) // Start the worker Goroutine
+	}
+
+	wg.Wait() // Wait for all Goroutines to finish
+	fmt.Println("All Goroutines have completed.")
 }
