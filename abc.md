@@ -2,6 +2,10 @@
 
 As per your suggestion, I selected model A's response as a conversation history. Now give me a user prompt for turn2 which will be cohirent with response selected and user prompt for turn1
 
+Don't penalize Instruction Following for accuracy issues or for incorrect code or incorrect library packages. Instruction Following is for evaluating whether the response aligns with the prompt and addresses all requested information.
+
+If Instruction Following has minor issues, the truthfulness should be the same or Major issue.
+Do not penalize IF for accuracy issues, penalize Truthfulness instead
 
 Now provide me these details for both the responses 
 
@@ -51,6 +55,20 @@ Wed:
 391124 --> 2
 391119 --> 2
 391178 --> 2
-391145
-391132
+391145 --> 2
 RW     --> 1
+
+Guru:
+391132 --> 2
+391122 --> 2
+391152 --> 2
+391156 --> 2
+391109 --> 2
+391117 --> 2
+391139 --> 2
+
+Friday 
+391096 --> 2
+391105 --> 2
+390807 --> 2
+390804 -->
