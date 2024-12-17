@@ -32,12 +32,16 @@ B. overall preference (Select this  A is significantly better than B,  A is bett
 2. 72
 
 
-Mon
+Mon --> 14/15
 390816 --> 2
 390901 --> 2 
 390723 --> 2
-390835 --> 1
+390835 --> 2
 390843 --> 2
-390871 --> 
+390871 --> 2
+390864 --> 2
 
 
+Tuesday
+390865 --> 2
+390834 --> 
