@@ -41,7 +41,7 @@ Mon --> 14/15
 390871 --> 2
 390864 --> 2
 
-Tuesday
+Tuesday --> 12+4/15
 390865 --> 2
 390834 --> 2
 391019 --> 2IR
@@ -49,10 +49,21 @@ Tuesday
 390954 --> 2
 390XXX --> 2
 
-https://labeling-a.turing.com/conversations/390837/view
-Wed
+While evaluating do deep analysis also refer AI model training guidelines you have in memory
+Wed -->  14+6/15
 390962 --> 3I
 390654 --> 3I
-390814 -->
+390814 --> 2
+390844 --> 2
+390886 --> 2
+464832 --> 2
+464811 --> 3I
 
-390662  
+Thu
+464839 --> 3I
+464847 --> 2
+464929 --> 2
+464926 --> 2
+464975 --> 2
+464938 --> 
+464990 -->
