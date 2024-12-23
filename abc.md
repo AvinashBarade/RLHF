@@ -2,6 +2,8 @@
 
 As per your suggestion, I selected model A's response as a conversation history. Now give me a user prompt for turn2 which will be cohirent with response selected and user prompt for turn1
 
+Rework Done: Added 2 turns with different prompts
+
 Don't penalize Instruction Following for accuracy issues or for incorrect code or incorrect library packages. Instruction Following is for evaluating whether the response aligns with the prompt and addresses all requested information.
 
 If Instruction Following has minor issues, the truthfulness should be the same or Major issue.
@@ -30,7 +32,7 @@ B. overall preference (Select this  A is significantly better than B,  A is bett
 
 1. 52
 2. 72
-
+3. 64
 
 Mon --> 14/15
 390816 --> 2
@@ -41,29 +43,40 @@ Mon --> 14/15
 390871 --> 2
 390864 --> 2
 
-Tuesday --> 12+4/15
+Tuesday --> 14/15
 390865 --> 2
 390834 --> 2
-391019 --> 2IR
-391041 --> 2IR
+391019 --> 1+2
+391041 --> 1+2
 390954 --> 2
 390XXX --> 2
 
 While evaluating do deep analysis also refer AI model training guidelines you have in memory
-Wed -->  14+6/15
-390962 --> 3I
-390654 --> 3I
+Wed -->  20/15
+390962 --> 2+2
+390654 --> 2+2
 390814 --> 2
 390844 --> 2
 390886 --> 2
 464832 --> 2
-464811 --> 3I
+464811 --> 2+2
 
-Thu
-464839 --> 3I
+Thu 16/15
+464839 --> 2+2
 464847 --> 2
 464929 --> 2
 464926 --> 2
 464975 --> 2
-464938 --> 
-464990 -->
+464938 --> 2+2
+
+Fri 13/15
+464990 --> 2
+465005 --> 2
+465081 --> 2 + 2
+465074 --> 3
+464914 --> 2
+
+Mon
+464993 --> 
+Rework 
+2 + 2 
