@@ -2,76 +2,114 @@ package main
 
 import (
 	"fmt"
-	"runtime"
 	"sync"
-	"time"
 )
 
-// AlignedData represents a struct with fields optimized for memory alignment
-type AlignedData struct {
-	Value1 float64 // Aligned on 8-byte boundary
-	Value2 float64 // Aligned on 8-byte boundary
+type Event struct {
+	name string
 }
 
-// processBatchConcurrent uses Goroutines to process data in batches concurrently
-func processBatchConcurrent(data []AlignedData, batchSize int, numWorkers int) {
-	var wg sync.WaitGroup
-	dataCh := make(chan []AlignedData, numWorkers) // Channel to distribute batches to workers
+type Observer interface {
+	Notify(event *Event)
+}
 
-	// Start worker Goroutines
-	for i := 0; i < numWorkers; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for batch := range dataCh {
-				for j := range batch {
-					batch[j].Value1 *= 2
-					batch[j].Value2 *= 3
-				}
-			}
-		}()
-	}
+type Subject struct {
+	observers []Observer
+	mutex     sync.Mutex
+}
 
-	// Distribute data batches to the channel
-	for i := 0; i < len(data); i += batchSize {
-		end := i + batchSize
-		if end > len(data) {
-			end = len(data)
+func (s *Subject) Attach(observer Observer) {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	s.observers = append(s.observers, observer)
+}
+
+func (s *Subject) Detach(observer Observer) {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	for i, o := range s.observers {
+		if o == observer {
+			s.observers = append(s.observers[:i], s.observers[i+1:]...)
+			return
 		}
-		dataCh <- data[i:end]
 	}
+}
 
-	close(dataCh) // Close channel to signal workers
-	wg.Wait()     // Wait for all workers to complete
+func (s *Subject) NotifyObservers(event *Event) {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	for _, observer := range s.observers {
+		observer.Notify(event)
+	}
+}
+
+type Worker struct {
+	id       int
+	subject  *Subject
+	doneChan chan struct{}
+}
+
+func NewWorker(id int, subject *Subject) *Worker {
+	return &Worker{
+		id:       id,
+		subject:  subject,
+		doneChan: make(chan struct{}),
+	}
+}
+
+func (w *Worker) Start() {
+	go func() {
+		defer close(w.doneChan)
+		for {
+			select {
+			case <-w.doneChan:
+				fmt.Printf("Worker %d: Stopped\n", w.id)
+				return
+			default:
+				fmt.Printf("Worker %d: Working...\n", w.id)
+				w.subject.NotifyObservers(&Event{name: "WorkerStarted"})
+			}
+		}
+	}()
+}
+
+func (w *Worker) Stop() {
+	close(w.doneChan)
+}
+
+type EventHandler struct {
+	id int
+}
+
+func (h *EventHandler) Notify(event *Event) {
+	fmt.Printf("Handler %d: Received event: %s\n", h.id, event.name)
 }
 
 func main() {
-	// Large array of aligned data
-	const dataSize = 1_000_000
-	data := make([]AlignedData, dataSize)
-	for i := range data {
-		data[i] = AlignedData{Value1: float64(i), Value2: float64(i + 1)}
-	}
+	subject := &Subject{}
 
-	// Measure performance of regular range loop
-	start := time.Now()
-	processAligned(data)
-	elapsed := time.Since(start)
-	fmt.Printf("Regular range loop: %v\n", elapsed)
+	worker1 := NewWorker(1, subject)
+	worker2 := NewWorker(2, subject)
 
-	// Measure performance of batch processing with Goroutines
-	batchSize := 1024
-	numWorkers := runtime.NumCPU()
-	start = time.Now()
-	processBatchConcurrent(data, batchSize, numWorkers)
-	elapsed = time.Since(start)
-	fmt.Printf("Batch processing with %d Goroutines: %v\n", numWorkers, elapsed)
-}
+	handler1 := &EventHandler{id: 1}
+	handler2 := &EventHandler{id: 2}
 
-// processAligned processes the data sequentially using a range loop
-func processAligned(data []AlignedData) {
-	for i := range data {
-		data[i].Value1 *= 2
-		data[i].Value2 *= 3
-	}
+	subject.Attach(handler1)
+	subject.Attach(handler2)
+
+	worker1.Start()
+	worker2.Start()
+
+	// Simulate some work and then stop the workers
+	fmt.Println("Doing some work...")
+
+	worker1.Stop()
+	worker2.Stop()
+
+	// Wait for workers to finish
+	<-worker1.doneChan
+	<-worker2.doneChan
+
+	subject.Detach(handler1)
+	subject.Detach(handler2)
 }

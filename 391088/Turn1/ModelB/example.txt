@@ -1,3 +1,12 @@
 Hi from example.txt
 Hi from example.txt
 Hi from example.txt
+
+Model B's Output:
+
+Doing some work...
+
+Program exited.
+
+Here, it looks program is running fine but it is not.
+Main function is not waiting for other goroutines for to end there execution 
