@@ -5,111 +5,72 @@ import (
 	"sync"
 )
 
-type Event struct {
-	name string
+// Define a Patient struct to hold patient information
+type Patient struct {
+	ID        int
+	Name      string
+	Age       int
+	Diagnosis string
 }
 
-type Observer interface {
-	Notify(event *Event)
+// Define a PatientData struct to hold a slice of patients
+type PatientData struct {
+	Patients []Patient
 }
 
-type Subject struct {
-	observers []Observer
-	mutex     sync.Mutex
-}
+// ProcessPatient is a function closure that performs some analysis on a single patient
+func ProcessPatient(patient Patient, wg *sync.WaitGroup, minAge, maxAge int, diagnoses []string) {
+	defer wg.Done()
 
-func (s *Subject) Attach(observer Observer) {
-	s.mutex.Lock()
-	defer s.mutex.Unlock()
-	s.observers = append(s.observers, observer)
-}
-
-func (s *Subject) Detach(observer Observer) {
-	s.mutex.Lock()
-	defer s.mutex.Unlock()
-	for i, o := range s.observers {
-		if o == observer {
-			s.observers = append(s.observers[:i], s.observers[i+1:]...)
-			return
-		}
-	}
-}
-
-func (s *Subject) NotifyObservers(event *Event) {
-	s.mutex.Lock()
-	defer s.mutex.Unlock()
-	for _, observer := range s.observers {
-		observer.Notify(event)
-	}
-}
-
-type Worker struct {
-	id       int
-	subject  *Subject
-	doneChan chan struct{}
-}
-
-func NewWorker(id int, subject *Subject) *Worker {
-	return &Worker{
-		id:       id,
-		subject:  subject,
-		doneChan: make(chan struct{}),
-	}
-}
-
-func (w *Worker) Start() {
-	go func() {
-		defer close(w.doneChan)
-		for {
-			select {
-			case <-w.doneChan:
-				fmt.Printf("Worker %d: Stopped\n", w.id)
+	// Check if the patient matches the filtering criteria
+	if patient.Age >= minAge && patient.Age <= maxAge {
+		for _, diag := range diagnoses {
+			if patient.Diagnosis == diag {
+				// Example analysis: Check if the patient is over 65
+				if patient.Age > 65 {
+					fmt.Println("Patient", patient.Name, "is over 65 and has been flagged.")
+				}
 				return
-			default:
-				fmt.Printf("Worker %d: Working...\n", w.id)
-				w.subject.NotifyObservers(&Event{name: "WorkerStarted"})
 			}
 		}
-	}()
+	}
 }
 
-func (w *Worker) Stop() {
-	close(w.doneChan)
-}
+// AnalyzePatients processes a large dataset of patients in parallel with filtering
+func AnalyzePatients(patientData PatientData, minAge, maxAge int, diagnoses []string) {
+	var wg sync.WaitGroup
 
-type EventHandler struct {
-	id int
-}
+	// Iterate over the patients using a range loop
+	for _, patient := range patientData.Patients {
+		wg.Add(1)
+		go ProcessPatient(patient, &wg, minAge, maxAge, diagnoses)
+	}
 
-func (h *EventHandler) Notify(event *Event) {
-	fmt.Printf("Handler %d: Received event: %s\n", h.id, event.name)
+	// Wait for all goroutines to finish
+	wg.Wait()
 }
 
 func main() {
-	subject := &Subject{}
+	// Example dataset of patients
+	patients := []Patient{
+		{ID: 1, Name: "Alice Johnson", Age: 68, Diagnosis: "Hypertension"},
+		{ID: 2, Name: "Bob Smith", Age: 35, Diagnosis: "Asthma"},
+		{ID: 3, Name: "Charlie Brown", Age: 72, Diagnosis: "Diabetes"},
+		{ID: 4, Name: "Diana Prince", Age: 29, Diagnosis: "None"},
+		{ID: 5, Name: "Edward Cullen", Age: 109, Diagnosis: "Diabetes"},
+		{ID: 6, Name: "Franklin D. Roosevelt", Age: 95, Diagnosis: "Hypertension"},
+	}
 
-	worker1 := NewWorker(1, subject)
-	worker2 := NewWorker(2, subject)
+	// Create a PatientData struct to hold the dataset
+	patientData := PatientData{Patients: patients}
 
-	handler1 := &EventHandler{id: 1}
-	handler2 := &EventHandler{id: 2}
+	// Example 1: Analyze patients aged between 60 and 80 with "Hypertension" or "Diabetes" diagnosis
+	diagnoses := []string{"Hypertension", "Diabetes"}
+	AnalyzePatients(patientData, 60, 80, diagnoses)
 
-	subject.Attach(handler1)
-	subject.Attach(handler2)
+	// Example 2: Analyze patients with age > 30 and "None" diagnosis
+	AnalyzePatients(patientData, 30, 100, []string{"None"})
 
-	worker1.Start()
-	worker2.Start()
-
-	// Simulate some work and then stop the workers
-	fmt.Println("Doing some work...")
-
-	worker1.Stop()
-	worker2.Stop()
-
-	// Wait for workers to finish
-	<-worker1.doneChan
-	<-worker2.doneChan
-
-	subject.Detach(handler1)
-	subject.Detach(handler2)
+	// Example 3: Analyze all patients (no filtering)
+	AnalyzePatients(patientData, 0, 100, []string{})
 }

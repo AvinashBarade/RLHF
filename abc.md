@@ -35,13 +35,21 @@ B. overall preference (Select this  A is significantly better than B,  A is bett
 3. 77
 4. 
 
-Mon
+Mon 8/15
 464993 --> 2
 464998 --> 2
 Rework 
 2 + 2 
 
-Tue
+Tue 14/15
 464952 --> 2
+464985 --> 2
+493844 --> 2+2
+493979 --> 3
+493980 --> 3
 
-
+Wed  07/15
+493864 --> 1+2
+493900 --> 2
+493812 --> 2
+493831
