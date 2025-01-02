@@ -13,7 +13,11 @@ type Session struct {
 	ID        string    `json:"id"`
 	Username  string    `json:"username"`
 	CreatedAt time.Time `json:"created_at"`
+	ExpiresAt time.Time `json:"expires_at"`
 }
+
+// SessionDuration is the duration after which a session will expire
+var SessionDuration = time.Second * 10 // Set to 10 seconds for demonstration
 
 var (
 	sessions    = make(map[string]Session) // Map to hold session ID to session data
@@ -36,6 +40,7 @@ func addSession(w http.ResponseWriter, r *http.Request) {
 		ID:        sessionID,
 		Username:  username,
 		CreatedAt: time.Now(),
+		ExpiresAt: time.Now().Add(SessionDuration),
 	}
 	sessions[sessionID] = newSession
 
@@ -87,9 +92,31 @@ func monitorSessions() {
 	}
 }
 
+// Function to clean up expired sessions
+func cleanExpiredSessions() {
+	ticker := time.NewTicker(time.Second * 1) // Check every second
+	defer ticker.Stop()
+
+	for range ticker.C {
+		sessionsMut.Lock()
+		defer sessionsMut.Unlock()
+
+		now := time.Now()
+		for sessionID, session := range sessions {
+			if session.ExpiresAt.Before(now) {
+				fmt.Printf("Expired session: %s\n", sessionID)
+				delete(sessions, sessionID)
+			}
+		}
+	}
+}
+
 func main() {
 	// Start monitoring sessions in a separate goroutine
 	go monitorSessions()
+
+	// Start cleaning expired sessions in a separate goroutine
+	go cleanExpiredSessions()
 
 	// Set up HTTP routes
 	http.HandleFunc("/add-session", addSession)

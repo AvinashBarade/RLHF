@@ -1,6 +1,7 @@
 # RLHF
 
-As per your suggestion, I selected model A's response as a conversation history. Now give me a user prompt for turn2 which will be cohirent with response selected and user prompt for turn1
+As per your suggestion, I selected model A's response as a conversation history. Now give me a user prompt for turn2
+which will be cohirent with response selected and user prompt for turn1
 
 Rework Done: Added 2 turns with different prompts
 
@@ -33,23 +34,25 @@ B. overall preference (Select this  A is significantly better than B,  A is bett
 1. 52
 2. 72
 3. 77
-4. 
+4. 63
 
-Mon 8/15
-464993 --> 2
-464998 --> 2
-Rework 
-2 + 2 
 
-Tue 14/15
-464952 --> 2
-464985 --> 2
-493844 --> 2+2
-493979 --> 3
-493980 --> 3
+Monday 12/15
+494133 --> 2
+494156 --> 2C
+494158 --> 4IRC
+494157 --> 2
+494151 --> 2
 
-Wed  07/15
-493864 --> 1+2
-493900 --> 2
-493812 --> 2
-493831
+Tue 15/15
+494242 --> 2
+494240 --> 4IR
+494235 --> 3
+494231 --> 2
+494212 --> 4IR
+
+Wed 06/15
+494085 --> 
+494055 --> 2
+494021 --> 2
+494015 --> 2
