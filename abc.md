@@ -31,10 +31,7 @@ A. Preference Explanation.
 
 B. overall preference (Select this  A is significantly better than B,  A is better than B, A is slightly better than B, A is negligibly better than B vice versa  )
 
-1. 52
-2. 72
-3. 77
-4. 63
+1. 37
 
 
 Monday 12/15
@@ -52,7 +49,11 @@ Tue 15/15
 494212 --> 4IR
 
 Wed 06/15
-494085 --> 
 494055 --> 2
 494021 --> 2
 494015 --> 2
+
+Friday 04/15
+494085 --> 2
+494187 --> 2
+494142 --> 

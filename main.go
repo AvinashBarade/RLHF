@@ -1,103 +1,110 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"net/http"
+	"os"
+	"os/signal"
 	"sync"
-	"time"
+	"syscall"
 )
 
-// Session struct to hold session information
-type Session struct {
-	ID        string    `json:"id"`
-	Username  string    `json:"username"`
-	CreatedAt time.Time `json:"created_at"`
+type SignalHandleFunc func()
+type SignalResult struct {
+	Error error
+	Data  interface{}
 }
 
-var (
-	sessions    = make(map[string]Session) // Map to hold session ID to session data
-	sessionsMut = sync.Mutex{}             // Mutex to ensure thread safety
-)
+type SignalHandler struct {
+	Name string
+	Func SignalHandleFunc
+}
 
-// Function to add a session
-func addSession(w http.ResponseWriter, r *http.Request) {
-	username := r.URL.Query().Get("username")
-	if username == "" {
-		http.Error(w, "Username is required", http.StatusBadRequest)
+var customSignals map[os.Signal]*SignalHandler
+var results map[os.Signal]SignalResult
+var wg sync.WaitGroup
+var signalHandlerMutex sync.Mutex
+
+func init() {
+	customSignals = make(map[os.Signal]*SignalHandler)
+	results = make(map[os.Signal]SignalResult)
+}
+func RegisterSignal(sig os.Signal, name string, handler SignalHandleFunc) {
+	signalHandlerMutex.Lock()
+	defer signalHandlerMutex.Unlock()
+
+	// Check if signal is already registered
+	_, ok := customSignals[sig]
+	if ok {
+		fmt.Printf("Signal '%s' (%v) is already registered.\n", name, sig)
 		return
 	}
 
-	sessionsMut.Lock()
-	defer sessionsMut.Unlock()
-
-	sessionID := fmt.Sprintf("session-%d", time.Now().UnixNano())
-	newSession := Session{
-		ID:        sessionID,
-		Username:  username,
-		CreatedAt: time.Now(),
+	// Save the new signal handler
+	customSignals[sig] = &SignalHandler{
+		Name: name,
+		Func: handler,
 	}
-	sessions[sessionID] = newSession
 
-	bytes, err := json.MarshalIndent(newSession, "", "  ")
+	// Block the signal
+	err := syscall.Sigprocmask(syscall.SIG_BLOCK, &syscall.Sigset_t{Set: []uint64{uint64(sig)}}, nil)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		fmt.Printf("Error blocking signal '%s': %v\n", name, err)
 		return
 	}
-	w.Write(bytes)
+
+	// Unblock the signal in a goroutine to handle it asynchronously
+	go handleSignal(sig)
 }
+func handleSignal(sig os.Signal) {
+	for {
+		select {
+		case <-signal.Notify(make(chan os.Signal, 1), sig):
+			handler, ok := customSignals[sig]
+			if !ok {
+				fmt.Printf("Received signal '%s' (%v), but no handler is registered.\n", sig, sig)
+				return
+			}
 
-// Function to remove a session
-func removeSession(w http.ResponseWriter, r *http.Request) {
-	sessionID := r.URL.Query().Get("sessionID")
-	if sessionID == "" {
-		http.Error(w, "Session ID is required", http.StatusBadRequest)
-		return
-	}
-
-	sessionsMut.Lock()
-	defer sessionsMut.Unlock()
-
-	if _, ok := sessions[sessionID]; !ok {
-		http.Error(w, "Session not found", http.StatusNotFound)
-		return
-	}
-
-	delete(sessions, sessionID)
-	fmt.Fprintln(w, "Session removed")
-}
-
-// Function to monitor sessions and compute growth rate
-func monitorSessions() {
-	previousCount := 0
-	ticker := time.NewTicker(time.Second * 5)
-	defer ticker.Stop()
-
-	for range ticker.C {
-		sessionsMut.Lock()
-		currentCount := len(sessions)
-		sessionsMut.Unlock()
-
-		if currentCount > 0 {
-			growthRate := float64(currentCount-previousCount) / float64(currentCount) * 100
-			fmt.Printf("Active sessions: %d, Growth rate: %.2f%%\n", currentCount, growthRate)
+			wg.Add(1)
+			defer wg.Done()
+			handler.Func()
+			results[sig] = SignalResult{Error: nil, Data: nil}
+			fmt.Printf("Signal '%s' handled successfully.\n", handler.Name)
 		}
-
-		previousCount = currentCount
 	}
+}
+func GracefulShutdown() {
+	fmt.Println("Graceful shutdown initiated...")
+	// Perform any cleanup operations here
 }
 
 func main() {
-	// Start monitoring sessions in a separate goroutine
-	go monitorSessions()
+	// Register a custom signal named "USR1"
+	RegisterSignal(syscall.SIGUSR1, "USR1", func() {
+		fmt.Println("Received SIGUSR1, data processing initiated...")
+		// Do some custom work here
+	})
 
-	// Set up HTTP routes
-	http.HandleFunc("/add-session", addSession)
-	http.HandleFunc("/remove-session", removeSession)
+	// Register a custom signal named "USR2"
+	RegisterSignal(syscall.SIGUSR2, "USR2", func() {
+		fmt.Println("Received SIGUSR2, custom operation triggered.")
+		// Perform another custom task here
+	})
 
-	// Start the HTTP server
-	fmt.Println("Server starting on :8080")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		fmt.Println("Server error:", err)
+	// Handle SIGTERM for graceful shutdown
+	signal.Notify(make(chan os.Signal, 1), syscall.SIGTERM)
+	go func() {
+		<-signal.Notify(make(chan os.Signal, 1), syscall.SIGTERM)
+		GracefulShutdown()
+	}()
+
+	// Wait for signals
+	fmt.Println("Awaiting signals...")
+	wg.Wait()
+
+	// Process signal results
+	fmt.Println("Signal Handling Complete:")
+	for sig, result := range results {
+		fmt.Printf("Signal: %v, Error: %v, Data: %v\n", sig, result.Error, result.Data)
 	}
 }
