@@ -1,0 +1,3 @@
+2025/01/05 11:26:10.696293 [DEPLOYMENT_SUCCESS] Deployment: Completed - Application deployed successfully
+2025/01/05 11:26:10.696800 [BUILD_FAILURE] Build: Failed - Build script exited with error: 'Go build failed: cannot find package main'
+2025/01/05 11:26:10.696800 [ENV_VAR_CHANGE] Environment: Updated - Environment variable 'DB_URL' changed from 'old_url' to 'new_url'
