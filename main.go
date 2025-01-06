@@ -5,28 +5,30 @@ import (
 	"os"
 )
 
-func readFile(filePath string) ([]byte, error) {
-	file, err := os.Open(filePath)
+func main() {
+	// Example: using fmt.Fprintf to write to a file
+	file, err := os.Create("output.txt")
 	if err != nil {
-		return nil, fmt.Errorf("failed to open file %s: %w", filePath, err)
+		fmt.Printf("Error creating file: %v\n", err)
+		return
 	}
 	defer file.Close()
 
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read file %s: %w", filePath, err)
+	if _, err := fmt.Fprintf(file, "Hello, %s!\n", "Gopher"); err != nil {
+		// Handle I/O error writing to file
+		fmt.Printf("Error writing to file: %v\n", err)
+		return
 	}
 
-	return data, nil
-}
-
-func main() {
-	filePath := "example.txt"
-	data, err := readFile(filePath)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-		os.Exit(1)
+	// Example: using fmt.Errorf for returning a formatted error
+	userID := 42
+	if userID < 0 {
+		err := fmt.Errorf("userID cannot be negative: %d", userID)
+		// Handle this error
+		fmt.Println("Error:", err)
 	}
 
-	fmt.Printf("File content: %s\n", string(data))
+	// Meanwhile, fmt.Sprintf never returns an error
+	msg := fmt.Sprintf("User ID: %d", userID)
+	fmt.Println(msg) // "User ID: 42"
 }
