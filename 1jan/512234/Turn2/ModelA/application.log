@@ -1,0 +1,9 @@
+[FilterLogger] 2025/01/08 09:23:03.580881 Starting filtering process
+[FilterLogger] 2025/01/08 09:23:03.582111 Skipped negative integer: -5 at index 1
+[FilterLogger] 2025/01/08 09:23:03.582111 Skipped non-integer value: hello of type string at index 2
+[FilterLogger] 2025/01/08 09:23:03.582111 Skipped float: 23.50 at index 4
+[FilterLogger] 2025/01/08 09:23:03.582471 Skipped negative integer: -7 at index 5
+[FilterLogger] 2025/01/08 09:23:03.582471 Skipped non-integer value: world of type string at index 7
+[FilterLogger] 2025/01/08 09:23:03.582471 Skipped float: 3.14 at index 8
+[FilterLogger] 2025/01/08 09:23:03.582471 Skipped negative integer: -4 at index 9
+[FilterLogger] 2025/01/08 09:23:03.583181 Filtering complete. Input: [10 -5 hello 0 23.5 -7 8 world 3.14 -4], Filtered: [10 0 8]

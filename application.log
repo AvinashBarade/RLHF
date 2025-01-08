@@ -1,0 +1,4 @@
+[FilterLogger] 2025/01/08 09:06:40.819978 Starting filtering process
+[FilterLogger] 2025/01/08 09:06:40.820505 Filtering complete. Input: [10 -5 0 23 -7 8], Filtered: [10 0 23 8]
+[FilterLogger] 2025/01/08 09:15:02.453574 Starting filtering process
+[FilterLogger] 2025/01/08 09:15:02.454100 Filtering complete. Input: [10 -5 0 23 -7 8], Filtered: [10 0 23 8]

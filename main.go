@@ -2,56 +2,59 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
-	"os/signal"
-	"syscall"
 )
 
-// SignalHandler defines an interface for signal handlers.
-type SignalHandler interface {
-	HandleSignal(sig os.Signal)
-}
-
-// GracefulShutdownHandler implements SignalHandler for graceful shutdown.
-type GracefulShutdownHandler struct {
-	// Add any additional fields required for graceful shutdown here.
-}
-
-// HandleSignal handles OS signals.
-func (gsh *GracefulShutdownHandler) HandleSignal(sig os.Signal) {
-	switch sig {
-	case syscall.SIGINT, syscall.SIGTERM:
-		fmt.Println("Received signal:", sig)
-		fmt.Println("Gracefully shutting down...")
-		// Perform graceful shutdown operations here.
-		os.Exit(0)
-	default:
-		fmt.Println("Unrecognized signal:", sig)
+// FilterPositiveNumbers filters out negative numbers from a slice of integers while maintaining order.
+func FilterPositiveNumbers(numbers []int) ([]int, error) {
+	// Check for nil slice
+	if numbers == nil {
+		log.Println("ERROR: Input slice is nil")
+		return nil, fmt.Errorf("input slice is nil")
 	}
+
+	// Filter positive numbers
+	filtered := []int{}
+	for _, num := range numbers {
+		if num >= 0 {
+			filtered = append(filtered, num)
+		}
+	}
+
+	return filtered, nil
 }
 
-// RegisterSignalHandlers registers signal handlers.
-func RegisterSignalHandlers(handlers ...SignalHandler) {
-	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
-
-	go func() {
-		for sig := range sigChan {
-			for _, handler := range handlers {
-				handler.HandleSignal(sig)
-			}
-		}
-	}()
+func setupLogger() {
+	// Configure the logger with custom settings
+	logFile, err := os.OpenFile("application.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		fmt.Printf("Failed to set up log file: %v\n", err)
+		os.Exit(1)
+	}
+	log.SetOutput(logFile)
+	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
+	log.SetPrefix("[FilterLogger] ")
 }
 
 func main() {
-	// Create a GracefulShutdownHandler.
-	gsh := &GracefulShutdownHandler{}
+	// Set up the logger
+	setupLogger()
 
-	// Register the GracefulShutdownHandler with RegisterSignalHandlers.
-	RegisterSignalHandlers(gsh)
+	// Example input slice
+	input := []int{10, -5, 0, 23, -7, 8}
 
-	// The rest of your application code goes here.
-	fmt.Println("Application started...")
-	select {}
+	log.Println("Starting filtering process")
+
+	// Process the slice
+	filtered, err := FilterPositiveNumbers(input)
+	if err != nil {
+		log.Printf("ERROR: %v\n", err)
+		return
+	}
+
+	log.Printf("Filtering complete. Input: %v, Filtered: %v\n", input, filtered)
+
+	// Output the result
+	fmt.Println("Filtered slice:", filtered)
 }
